@@ -45,7 +45,7 @@ ff0055ff = brownish
 
 os.system('cls')
 
-print "\n\n GPSEXIF2GE v%s\n\n" % version
+print "\n\n geotag2kml v%s\n\n" % version
 print " Enter the absolute path to the parent folder to parse\n (no quotes required - i.e. C:\TEMP\PICTURES)\n (the same path will be used to write the Google Earth KML file)\n\n"
 dir_pic = raw_input(r" ===> ")
 
