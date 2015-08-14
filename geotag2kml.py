@@ -27,30 +27,31 @@ import random
 
 version = "0.1"
 
-linecolor=['ff00ffff','ff0000ff','ffaa00ff','ffff0000','ff00ff00','ffffffff','fff8a5f8','ffffaa55','ff0055ff']
+c_red="ff0000ff"
+c_yellow="ff00ffff"
+c_violet="ffaa00ff"
+c_green="ff00ff00" 
+c_pink="fff8a5f8"
+c_brownish="ff0055ff"
+c_white="ffffffff"
+c_darkblue="ffff0000"
+c_mustard="ff00aaaa"
+c_lightblue="ffffaa55"
 
-'''
-COLOR LEGEND
+colors=[c_red,c_yellow,c_violet,c_green,c_pink,c_brownish,c_white,c_darkblue,c_mustard,c_lightblue]
 
-ff00ffff = yellow
-ff0000ff = red
-ffaa00ff = violet
-ffff0000 = dark blue
-ffffaa55 = light blue
-ff00ff00 = green
-ffffffff = white
-fff8a5f8 = pink
-ff0055ff = brownish
-'''
-
-os.system('cls')
-
-print "\n\n geotag2kml v%s\n\n" % version
-print " Enter the absolute path to the parent folder to parse\n (no quotes required - i.e. C:\TEMP\PICTURES)\n (the same path will be used to write the Google Earth KML file)\n\n"
-dir_pic = raw_input(r" ===> ")
-
-os.chdir(dir_pic)
-
+def welcome():
+    os.system('cls')
+    print "\n\n geotag2kml v%s\n\n" % version
+    print " Enter the absolute path to the parent folder to parse\n (no quotes required - i.e. C:\TEMP\PICTURES)\n (the same path will be used to write the Google Earth KML file)\n\n"
+    dir_pic = raw_input(r" ===> ")
+    if os.path.exists(dir_pic) == True:
+        os.chdir(dir_pic)
+    else:
+        welcome()
+ 
+welcome() 
+ 
 if os.path.exists('temp_exif.csv'):
     os.remove('temp_exif.csv')
 
@@ -271,6 +272,10 @@ for date in uniq_dates:
                 w.write("\t\t\t<styleUrl>#msn_man</styleUrl>\n\t\t\t<Point><coordinates>%s,%s</coordinates></Point>" % (column[3],column[4]))
             else:
                 w.write("\t\t\t<styleUrl>#msn_pink-blank</styleUrl>\n\t\t\t<Point><coordinates>%s,%s</coordinates></Point>" % (column[3],column[4]))
+            if counter_wp_date <=10:
+                color=colors[counter_wp_date-1]
+            else:
+                color=random.choice(colors)
             w.write("\n        </Placemark>\n")
     w.write('''        <Placemark>
             <name>Path %s on-off</name>
@@ -284,7 +289,7 @@ for date in uniq_dates:
             <MultiGeometry> 
               <LineString>
               <tessellate>%d</tessellate>
-                <coordinates>''' % (date,date,random.choice(linecolor),counter_wp_date))  #choose a random color for each path line
+                <coordinates>''' % (date,date,color,counter_wp_date))  #choose a random color for each path line
     for line in open("exif.csv"):
         column = line.split("\t")
         if date in line:
