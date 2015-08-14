@@ -255,50 +255,50 @@ def sea_level(refvalue):
 counter_wp_date = 0
 for date in uniq_dates:
     w.write("<Folder>\n")
-    w.write("       <name>%s</name>\n" % date)
+    w.write("\t<name>%s</name>\n" % date)
     counter_wp_date += 1   #counter_wp_date increases every time date in uniq_dates changes
     counter_1stwp_date =0
-    w.write("       <open>%d</open>\n" % counter_wp_date)
+    w.write("\t<open>%d</open>\n" % counter_wp_date)
     for line in open("exif.csv"):
         column = line.split("\t")
         if date in line:
             counter_1stwp_date += 1
             w.write("        <Placemark>\n")
-            w.write("<name>%s *** %s %s *** (%s) *** %s</name>\n" % (column[0], column[6], column[7], sea_level(column[5]),column[1]))
-            w.write("<description><![CDATA[<table><tr><td>\n")
-            w.write("<img src='%s/%s' width='384' height='288'>\n</td></tr></table>]]></description>\n" % (column[2].lower(),column[1].lower()))
+            w.write("\t\t\t<name>%s *** %s %s *** (%s) *** %s</name>\n" % (column[0], column[6], column[7].rstrip('\n'), sea_level(column[5]),column[1]))
+            w.write("\t\t\t<description>\n\t\t\t<![CDATA[<table><tr><td>\n")
+            w.write("\t\t\t<img src='%s/%s' width='384' height='288'>\n\t\t\t</td></tr></table>]]>\n\t\t\t</description>\n" % (column[2].lower(),column[1].lower()))
             if counter_1stwp_date == 1:    # value 1 means that it's the first waypoint of a new path (shown with the icon of a man)
-                w.write("<styleUrl>#msn_man</styleUrl>\n<Point>\n<coordinates>%s,%s</coordinates>\n</Point>" % (column[3],column[4]))
+                w.write("\t\t\t<styleUrl>#msn_man</styleUrl>\n\t\t\t<Point><coordinates>%s,%s</coordinates></Point>" % (column[3],column[4]))
             else:
-                w.write("<styleUrl>#msn_pink-blank</styleUrl>\n<Point>\n<coordinates>%s,%s</coordinates>\n</Point>" % (column[3],column[4]))
-            w.write("        </Placemark>\n")
+                w.write("\t\t\t<styleUrl>#msn_pink-blank</styleUrl>\n\t\t\t<Point><coordinates>%s,%s</coordinates></Point>" % (column[3],column[4]))
+            w.write("\n        </Placemark>\n")
     w.write('''        <Placemark>
-                          <name>Path %s on-off</name>
-<description>Path %s</description>
-   <Style>
-      <LineStyle>
-         <color>%s</color>
-         <width>4.0</width>
-      </LineStyle>
-   </Style>
-  <MultiGeometry> 
-   <LineString>
-     <tessellate>%d</tessellate>
-     <coordinates>\n''' % (date,date,random.choice(linecolor),counter_wp_date))  #choose a random color for each path line
+            <name>Path %s on-off</name>
+            <description>Path %s</description>
+            <Style>
+             <LineStyle>
+               <color>%s</color>
+               <width>4.0</width>
+             </LineStyle>
+            </Style>
+            <MultiGeometry> 
+              <LineString>
+              <tessellate>%d</tessellate>
+                <coordinates>''' % (date,date,random.choice(linecolor),counter_wp_date))  #choose a random color for each path line
     for line in open("exif.csv"):
         column = line.split("\t")
         if date in line:
-            w.write(str(column[3]) + "," + str(column[4]).rstrip('\n') + ",0\t"  )
+            w.write(str(column[3]) + "," + str(column[4]).rstrip('\n') + ",0\t")
     w.write('''
-      </coordinates>
-   </LineString>
-  </MultiGeometry> 
-</Placemark>''')
-    w.write("\n    </Folder>\n")
+               </coordinates>
+              </LineString>
+            </MultiGeometry> 
+        </Placemark>''')
+    w.write("\n</Folder>\n")
 
 #kml_end is the last part of the KML file
 
-kml_end = """ </Document>
+kml_end = """</Document>
 </kml>
 """
 
