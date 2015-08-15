@@ -10,7 +10,7 @@ Python script to extract exif GPS data from photos and generate a Google Earth K
 
 Prerequisites:
   - python v2.7
-  - exiftool
+  - exiftool (rename the executable into "exiftool.exe")
   - Google Earth
   
 Use at your own risk
@@ -19,13 +19,22 @@ DateTimeOriginal is in LOCAL TIME
 
 Placemark naming layout:
 DateTimeOriginal ** Make Model ** Altitude (A=Above Sea Level, B=Below Sea Level), Filename
+
+Useful information at:
+http://u88.n24.queensu.ca/exiftool/forum/index.php/topic,1688.msg7373.html#msg7373
 '''
 
+from collections import Counter
 import csv
 import os
 import random
+import subprocess
+import sys
+import time
 
 version = "0.1"
+
+# color legend
 
 c_red="ff0000ff"
 c_yellow="ff00ffff"
@@ -46,8 +55,16 @@ def welcome():
     print " Enter the absolute path to the parent folder to parse\n (no quotes required - i.e. C:\TEMP\PICTURES)\n (the same path will be used to write the Google Earth KML file)\n\n"
     dir_pic = raw_input(r" ===> ")
     if os.path.exists(dir_pic) == True:
-        os.chdir(dir_pic)
+        try:
+            subprocess.check_output('exiftool')
+        except Exception, err:
+            print "\n\n ERROR: missing executable exiftool.exe\n\n\n"
+            sys.exit()
+        else:
+            os.chdir(dir_pic)
     else:
+        print "\n ERROR: the path %s doesn't exist" % dir_pic
+        time.sleep(2)
         welcome()
  
 welcome() 
@@ -93,6 +110,9 @@ for line in reader:
     uniq_models.append(b)
     
 uniq_dates  = sorted(set(uniq_dates))
+
+uniq_models_counter = Counter(uniq_models)
+
 uniq_models = sorted(set(uniq_models))
 
 #kml_start contains the first block of data of the KML file
@@ -313,10 +333,11 @@ w.close()
 #print successful message
 
 if len(uniq_models)==1:
-    print "\n\n Geotagged photos were taken with %s" % uniq_models[0]
+    print "\n\n Geotagged photos (%d in total) were taken with:\n" % numlines
 else:
-    print "\n\n Geotagged photos were taken with %d different devices:\n" % len(uniq_models)
-    for model in uniq_models:
-        print " " + model
+    print "\n\n Geotagged photos (%d in total) were taken with %d different devices:\n" % (numlines, len(uniq_models))
+for makemodel, freq in uniq_models_counter.most_common():
+    print " -  %s (%d)" % (makemodel,freq)
 
 print "\n\n Google Earth KML file was successfully created!!\n"
+
