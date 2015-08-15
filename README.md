@@ -18,5 +18,6 @@ My script was written to:
   - Google Earth
 
 == Usage ==
+
 Run the script and type the absolute path of the directory to be parsed.
 
