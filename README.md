@@ -1,7 +1,8 @@
 # geotag2kml v0.1
 
 I needed a tool on Microsoft Windows to parse thousands of geotagged pictures and view them on Google Earth.
-I wrote this script to:
+
+My script was written to:
 
 - parse recursively geotagged pictures
 - create a KML file to view geotagged pictures on Google Earth
@@ -11,7 +12,11 @@ I wrote this script to:
 - get the preview of a picture when clicking on a placemark
 - list make and model information of each digital camera used to take and geotag the analyzed photos
 
-Prerequisites:
+== Prerequisites ==
   - python v2.7
   - exiftool (rename the executable into "exiftool.exe" and put it in the same folder of the script)
   - Google Earth
+
+== Usage ==
+Run the script and type the absolute path of the directory to be parsed.
+
