@@ -14,8 +14,8 @@ My script was written to:
 
 == Prerequisites ==
   - Python v2.7
-  - Exiftool (rename the executable into "exiftool.exe" and put it in the same folder of the script)
-  - Google Earth
+  - Exiftool v9 (rename the executable into "exiftool.exe" and put it in the same folder of the script)
+  - Google Earth v7
 
 == Usage ==
 
