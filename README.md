@@ -19,5 +19,5 @@ My script was written to:
 
 == Usage ==
 
-Run the script and type the absolute path of the directory to be parsed.
+Run the script and type the absolute path of the directory to be parsed
 
