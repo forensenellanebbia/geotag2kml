@@ -13,9 +13,9 @@ My script was written to:
 - list make and model information of each digital camera used to take and geotag the analyzed photos
 
 == Prerequisites ==
-  - Python v2.7
-  - Exiftool v9 (rename the executable into "exiftool.exe" and put it in the same folder of the script)
-  - Google Earth v7
+  - Python v2.7+
+  - Exiftool v9+ (rename the executable into "exiftool.exe" and put it in the same folder of the script)
+  - Google Earth v7+
 
 == Usage ==
 
