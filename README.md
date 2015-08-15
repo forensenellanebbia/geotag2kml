@@ -19,5 +19,6 @@ My script was written to:
 
 == Usage ==
 
-Run the script and type the absolute path of the directory to be parsed
+Run the script and type the absolute path of the directory to be parsed.
+The script will create a file named "GoogleEarth.kml" and will save it into the given path.
 
