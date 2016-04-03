@@ -1,4 +1,4 @@
-# geotag2kml v0.1
+# geotag2kml
 
 I needed a tool on Microsoft Windows to parse thousands of geotagged pictures and show them on Google Earth.
 

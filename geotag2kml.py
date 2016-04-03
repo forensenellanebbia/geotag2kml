@@ -1,86 +1,120 @@
-'''
-geotag2kml
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# geotag2kml
+#
+# Author: Gabriele Zambelli (Twitter: @gazambelli)
+# Blog  : http://forensenellanebbia.blogspot.it
+#
+# WARNING: This program is provided "as-is"
+# See http://forensenellanebbia.blogspot.it/2015/08/geotag2kml-python-script-to-create-kml.html
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You can view the GNU General Public License at <http://www.gnu.org/licenses/>
+#
+# Python script to extract exif GPS data from photos and generate a Google Earth KML file.
+#
+# Prerequisites:
+#  - python v2.7
+#  - exiftool (rename the executable into "exiftool.exe")
+#  - Google Earth (tested against Google Earth v7.1.5)
+#  
+# Change history
+# 2016-04-03 Bug fixes 
+# 2015-08  : first public release
+# 
+#
+# DateTimeOriginal is in LOCAL TIME
+#
+# Placemark naming layout:
+# DateTimeOriginal ** Make Model ** Altitude (A=Above Sea Level, B=Below Sea Level), Filename
+#
+# Useful information at:
+# http://u88.n24.queensu.ca/exiftool/forum/index.php/topic,1688.msg7373.html#msg7373
 
-Public Release: 08/2015
-Author        : Gabriele Zambelli
-Blog          : http://forensenellanebbia.blogspot.it
-Twitter       : @gazambelli
-
-Python script to extract exif GPS data from photos and generate a Google Earth KML file.
-
-Prerequisites:
-  - python v2.7
-  - exiftool (rename the executable into "exiftool.exe")
-  - Google Earth
-  
-Use at your own risk
-
-DateTimeOriginal is in LOCAL TIME
-
-Placemark naming layout:
-DateTimeOriginal ** Make Model ** Altitude (A=Above Sea Level, B=Below Sea Level), Filename
-
-Useful information at:
-http://u88.n24.queensu.ca/exiftool/forum/index.php/topic,1688.msg7373.html#msg7373
-'''
 
 from collections import Counter
+from datetime import datetime
 import csv
 import os
 import random
 import subprocess
 import sys
-import time
 
-version = "0.1"
+version = "0.2"
+path = "c:\\tools\\"
 
 # color legend
+c_brownish  = "ff0055ff"
+c_darkblue  = "ffff0000"
+c_green     = "ff00ff00" 
+c_lightblue = "ffffaa55"
+c_mustard   = "ff00aaaa"
+c_pink      = "fff8a5f8"
+c_red       = "ff0000ff"
+c_violet    = "ffaa00ff"
+c_white     = "ffffffff"
+c_yellow    = "ff00ffff"
 
-c_red="ff0000ff"
-c_yellow="ff00ffff"
-c_violet="ffaa00ff"
-c_green="ff00ff00" 
-c_pink="fff8a5f8"
-c_brownish="ff0055ff"
-c_white="ffffffff"
-c_darkblue="ffff0000"
-c_mustard="ff00aaaa"
-c_lightblue="ffffaa55"
-
-colors=[c_red,c_yellow,c_violet,c_green,c_pink,c_brownish,c_white,c_darkblue,c_mustard,c_lightblue]
+colors = [c_red, c_yellow, c_violet, c_green, c_pink, c_brownish, c_white, c_darkblue, c_mustard, c_lightblue]
 
 def welcome():
     os.system('cls')
-    print "\n\n geotag2kml v%s\n\n" % version
-    print " Enter the absolute path to the parent folder to parse\n (no quotes required - i.e. C:\TEMP\PICTURES)\n (the same path will be used to write the Google Earth KML file)\n\n"
-    dir_pic = raw_input(r" ===> ")
-    if os.path.exists(dir_pic) == True:
-        try:
-            subprocess.check_output('exiftool')
-        except Exception, err:
-            print "\n\n ERROR: missing executable exiftool.exe\n\n\n"
-            sys.exit()
+    try:
+        subprocess.check_output(path + 'exiftool.exe')
+    except:
+        print "\n\n ERROR: missing executable exiftool.exe\n\n\n"
+        sys.exit()
+    if len(sys.argv) == 1:
+        print "\n\n geotag2kml v%s\n\n" % version
+        print " How to use: ==> " + os.path.basename(sys.argv[0]) + " AbsolutePathToFolder"
+        print "\n (no double quotes required)\n (the same path will be used to write the Google Earth KML file)\n\n"
+        sys.exit()
+    elif len(sys.argv) == 2:
+        if os.path.exists(sys.argv[1]) == True:
+            os.chdir(sys.argv[1])
         else:
-            os.chdir(dir_pic)
-    else:
-        print "\n ERROR: the path %s doesn't exist" % dir_pic
-        time.sleep(2)
-        welcome()
+            print "\n ERROR: the path %s doesn't exist" % sys.argv[1]
+            sys.exit()
  
 welcome() 
- 
-if os.path.exists('temp_exif.csv'):
-    os.remove('temp_exif.csv')
+
+start_time = datetime.now()
 
 if os.path.exists('exif.csv'):
     os.remove('exif.csv')
+elif os.path.exists('temp_exif.csv'):
+    os.remove('temp_exif.csv')
 
 #run exiftool tool recursively seeking for specific extensions and skipping files without the fields gpslongitude and datetimeoriginal
 #csv output tab delimited
-    
-os.system('exiftool * -ext jpg -ext jpeg -ext tif -ext tiff -if "defined $exif:gpslongitude" -if "defined $exif:DateTimeOriginal" -r -datetimeoriginal -filename -directory -gpslongitude# -gpslatitude# -gpsaltitude -make -model -T >> temp_exif.csv')
 
-#the list gets sorted by DateTimeOriginal
+# http://www.sno.phy.queensu.ca/~phil/exiftool/exiftool_pod.html
+# -ext EXT    (-extension)         Process files with specified extension
+# -if EXPR                         Conditionally process files
+# defined                          if condition is True
+# ref tags:
+#          exif:gpslongitude
+#          exif:DateTimeOriginal
+# -r                               Recursive search
+# -gpslongitude# -gpslatitude#    Print coordinates in Decimal Degrees - without # output is Degrees Minutes Seconds
+# (http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/GPS.html)
+# chosen fields in the csv output:
+# -datetimeoriginal -filename -directory -gpslongitude# -gpslatitude# -gpsaltitude -make -model
+# -T          (-table)             Output in tabular format
+
+os.system(path + 'exiftool.exe * -ext jpg -ext jpeg -ext tif -ext tiff -if "defined $exif:gpslongitude" -if "defined $exif:DateTimeOriginal" -r -datetimeoriginal -filename -directory -gpslongitude# -gpslatitude# -gpsaltitude -make -model -T >> temp_exif.csv')
+
+#sort csv by DateTimeOriginal
 with open('temp_exif.csv', 'r') as r:
     with open('exif.csv', 'w') as w:
         w.write("datetimeoriginal\tfilename\tdirectory\tgpslongitude\tgpslatitude\tgpsaltitude\tmake\tmodel\n")
@@ -99,23 +133,22 @@ r.close()
 #find unique dates. This information will be used to name folders        
 reader = csv.DictReader(open("exif.csv"), delimiter='\t')
 
-uniq_dates=[]
-uniq_models=[]
+uniq_dates  = []
+uniq_models = []
 
 for line in reader:
     a = line["datetimeoriginal"]
-    a = a[:10]
+    a = a[:10] # YYYY:MM:DD
     uniq_dates.append(a,)
     b = line["make"] + " " + line["model"]
     uniq_models.append(b)
     
-uniq_dates  = sorted(set(uniq_dates))
+uniq_dates          = sorted(set(uniq_dates))
+uniq_models_counter = Counter(uniq_models) #number of pics by device model
+uniq_models         = sorted(set(uniq_models))
 
-uniq_models_counter = Counter(uniq_models)
 
-uniq_models = sorted(set(uniq_models))
-
-#kml_start contains the first block of data of the KML file
+# kml_start contains the first block of data of the KML file
 
 kml_start = """<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -238,34 +271,33 @@ kml_start = """<?xml version="1.0" encoding="UTF-8"?>
     </Style>
 """ % (numlines,len(uniq_dates),len(uniq_models))
 
-#KML file creation
+# Create KML file
 
 if os.path.exists('GoogleEarth.kml'):
     os.remove('GoogleEarth.kml')
     w = open('GoogleEarth.kml','w')
+    w.write(kml_start)
 else:
     w = open('GoogleEarth.kml','w')
+    w.write(kml_start)
 
-w.write(kml_start)
+# COLUMN LAYOUT REMINDER
+# column[0] = DateTimeOriginal
+# column[1] = Filename
+# column[2] = Directory
+# column[3] = GPSLongitude
+# column[4] = GPSLatitude
+# column[5] = GPSAltitude
+# column[6] = Make
+# column[7] = Model
+# 
+# GPSAltitudeRef
+# 0 = Above Sea Level
+# 1 = Below Sea Level
+# http://www.sno.phy.queensu.ca/~phil/exiftool/faq.html
 
-'''
-COLUMN LAYOUT REMINDER
-column[0] = DateTimeOriginal
-column[1] = Filename
-column[2] = Directory
-column[3] = GPSLongitude
-column[4] = GPSLatitude
-column[5] = GPSAltitude
-column[6] = Make
-column[7] = Model
 
-GPSAltitudeRef
-0 = Above Sea Level
-1 = Below Sea Level
-http://www.sno.phy.queensu.ca/~phil/exiftool/faq.html
-'''
-
-# placemarks
+# write placemarks
 
 def sea_level(refvalue):
     if refvalue.find('Above') != -1:
@@ -277,8 +309,8 @@ counter_wp_date = 0
 for date in uniq_dates:
     w.write("<Folder>\n")
     w.write("\t<name>%s</name>\n" % date)
-    counter_wp_date += 1   #counter_wp_date increases every time date in uniq_dates changes
-    counter_1stwp_date =0
+    counter_wp_date    += 1   #counter_wp_date increases every time date in uniq_dates changes
+    counter_1stwp_date  = 0
     w.write("\t<open>%d</open>\n" % counter_wp_date)
     for line in open("exif.csv"):
         column = line.split("\t")
@@ -321,12 +353,8 @@ for date in uniq_dates:
         </Placemark>''')
     w.write("\n</Folder>\n")
 
-#kml_end is the last part of the KML file
-
-kml_end = """</Document>
-</kml>
-"""
-
+#kml_end = KML file footer
+kml_end = "</Document>\n</kml>"
 w.write(kml_end)
 w.close()
 
@@ -341,3 +369,7 @@ for makemodel, freq in uniq_models_counter.most_common():
 
 print "\n\n Google Earth KML file was successfully created!!\n"
 
+end_time = datetime.now()
+print "\n\nScript started : " + str(start_time)
+print "Script finished: " + str(end_time)
+print('Duration       : {}'.format(end_time - start_time))
