@@ -1,5 +1,7 @@
 # geotag2kml
 
+Blog post: http://forensenellanebbia.blogspot.it/2015/08/geotag2kml-python-script-to-create-kml.html
+
 I needed a tool on Microsoft Windows to parse thousands of geotagged pictures and show them on Google Earth.
 
 My script was written to:
