@@ -112,11 +112,18 @@ elif os.path.exists('temp_exif.csv'):
 # -datetimeoriginal -filename -directory -gpslongitude# -gpslatitude# -gpsaltitude -make -model
 # -T          (-table)             Output in tabular format
 
-#pictures
-os.system(path + 'exiftool.exe * -ext jpg -ext jpeg -ext tif -ext tiff -if "defined $exif:gpslongitude" -if "defined $exif:DateTimeOriginal" -r -datetimeoriginal -filename -directory -gpslongitude# -gpslatitude# -gpsaltitude -make -model -T >> temp_exif.csv')
+#FIND geotagged pictures
+#pictures with DateTimeOriginal
+os.system(path + 'exiftool.exe -q * -ext jpg -ext jpeg -ext tif -ext tiff -if "defined $exif:gpslongitude" -if "defined $exif:DateTimeOriginal" -r -datetimeoriginal -filename -directory -gpslongitude# -gpslatitude# -gpsaltitude -make -model -T >> temp_exif.csv')
 
-#videos
-os.system(path + 'exiftool.exe * -ext mov -if "defined $gpslongitude" -if "defined $CreationDate" -r -CreationDate -FileName -Directory -GPSLongitude# -GPSLatitude# -GPSAltitude -Make -Model -T >> temp_exif.csv')
+#pictures without DateTimeOriginal that have both CreateDate+ModifyDate. Get CreateDate.
+os.system(path + 'exiftool.exe -q * -ext jpg -ext jpeg -ext tif -ext tiff -if "defined $gpslongitude" -if "not defined $DateTimeOriginal" -if "defined $Make" -if "defined $Model" -if "defined $CreateDate" -if "defined $ModifyDate" -r -CreateDate -filename -directory -gpslongitude# -gpslatitude# -gpsaltitude -make -model -T >> temp_exif.csv')
+
+#Find pictures without DateTimeOriginal/CreateDate but with ModifyDate
+os.system(path + 'exiftool.exe -q * -ext jpg -ext jpeg -ext tif -ext tiff -if "defined $gpslongitude" -if "not defined $DateTimeOriginal" -if "defined $Make" -if "defined $Model" -if "not defined $CreateDate" -if "defined $ModifyDate" -r -ModifyDate -filename -directory -gpslongitude# -gpslatitude# -gpsaltitude -make -model -T >> temp_exif.csv')
+
+#FIND geotagged videos (tested against iPhone videos)
+os.system(path + 'exiftool.exe -q * -ext mov -if "defined $gpslongitude" -if "defined $CreationDate" -r -CreationDate -FileName -Directory -GPSLongitude# -GPSLatitude# -GPSAltitude -Make -Model -T >> temp_exif.csv')
 
 #sort csv by DateTimeOriginal
 with open('temp_exif.csv', 'r') as r:
