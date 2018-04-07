@@ -29,9 +29,9 @@
 #  - Google Earth (tested against Google Earth v7.1.5)
 #  
 # Change history
-# 2016-04-03 Bug fixes 
-# 2015-08  : first public release
-# 
+# 2018-04-07: it's now able to show geotagged videos (.mov) into Google Earth
+# 2016-04-03: Bug fixes 
+# 2015-08   : First public release
 #
 # DateTimeOriginal is in LOCAL TIME
 #
@@ -50,8 +50,8 @@ import random
 import subprocess
 import sys
 
-version = "0.2"
-path = "c:\\tools\\"
+version = "0.3"
+path = "c:\\tools\\" #put exiftool in this folder
 
 # color legend
 c_brownish  = "ff0055ff"
@@ -107,12 +107,16 @@ elif os.path.exists('temp_exif.csv'):
 #          exif:DateTimeOriginal
 # -r                               Recursive search
 # -gpslongitude# -gpslatitude#    Print coordinates in Decimal Degrees - without # output is Degrees Minutes Seconds
-# (http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/GPS.html)
+# http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/GPS.html
 # chosen fields in the csv output:
 # -datetimeoriginal -filename -directory -gpslongitude# -gpslatitude# -gpsaltitude -make -model
 # -T          (-table)             Output in tabular format
 
+#pictures
 os.system(path + 'exiftool.exe * -ext jpg -ext jpeg -ext tif -ext tiff -if "defined $exif:gpslongitude" -if "defined $exif:DateTimeOriginal" -r -datetimeoriginal -filename -directory -gpslongitude# -gpslatitude# -gpsaltitude -make -model -T >> temp_exif.csv')
+
+#videos
+os.system(path + 'exiftool.exe * -ext mov -if "defined $gpslongitude" -if "defined $CreationDate" -r -CreationDate -FileName -Directory -GPSLongitude# -GPSLatitude# -GPSAltitude -Make -Model -T >> temp_exif.csv')
 
 #sort csv by DateTimeOriginal
 with open('temp_exif.csv', 'r') as r:
@@ -282,7 +286,7 @@ else:
     w.write(kml_start)
 
 # COLUMN LAYOUT REMINDER
-# column[0] = DateTimeOriginal
+# column[0] = DateTimeOriginal/CreationDate
 # column[1] = Filename
 # column[2] = Directory
 # column[3] = GPSLongitude
@@ -319,7 +323,10 @@ for date in uniq_dates:
             w.write("        <Placemark>\n")
             w.write("\t\t\t<name>%s *** %s %s *** (%s) *** %s</name>\n" % (column[0], column[6], column[7].rstrip('\n'), sea_level(column[5]),column[1]))
             w.write("\t\t\t<description>\n\t\t\t<![CDATA[<table><tr><td>\n")
-            w.write("\t\t\t<img src='%s/%s' width='384' height='288'>\n\t\t\t</td></tr></table>]]>\n\t\t\t</description>\n" % (column[2].lower(),column[1].lower()))
+            if column[1].lower().endswith(".mov"):
+				w.write("\t\t\t<embed type='application/x-mplayer2' src='%s/%s' name='MediaPlayer' width='384' height='288' ShowControls='1' ShowStatusBar='1' ShowDisplay='1' autostart='0'> </embed>\n\t\t\t</td></tr></table>]]>\n\t\t\t</description>\n" % (column[2].lower(),column[1].lower()))
+            else:
+				w.write("\t\t\t<img src='%s/%s' width='384' height='288'>\n\t\t\t</td></tr></table>]]>\n\t\t\t</description>\n" % (column[2].lower(),column[1].lower()))
             if counter_1stwp_date == 1:    # value 1 means that it's the first waypoint of a new path (shown with the icon of a man)
                 w.write("\t\t\t<styleUrl>#msn_man</styleUrl>\n\t\t\t<Point><coordinates>%s,%s</coordinates></Point>" % (column[3],column[4]))
             else:
@@ -361,9 +368,9 @@ w.close()
 #print successful message
 
 if len(uniq_models)==1:
-    print "\n\n Geotagged photos (%d in total) were taken with:\n" % numlines
+    print "\n\n Geotagged photos/videos (%d in total) were shot with:\n" % numlines
 else:
-    print "\n\n Geotagged photos (%d in total) were taken with %d different devices:\n" % (numlines, len(uniq_models))
+    print "\n\n Geotagged photos/videos (%d in total) were shot with %d different devices:\n" % (numlines, len(uniq_models))
 for makemodel, freq in uniq_models_counter.most_common():
     print " -  %s (%d)" % (makemodel,freq)
 
