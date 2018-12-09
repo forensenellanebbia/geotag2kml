@@ -12,7 +12,7 @@ The KML file will be structured this way:
 - placemark names contain: "Timestamp | Make Model | Altitude | Filename";
 - picture previews appear when clicking on a placemark.
 
-![KML](https://pbs.twimg.com/media/CMdDUfDWcAQfmvD.png){:width="800px" height="411px"}
+![KML](https://pbs.twimg.com/media/CMdDUfDWcAQfmvD.png)
 
 == Prerequisites ==
   - Python v2.7
