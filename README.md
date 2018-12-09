@@ -2,25 +2,23 @@
 
 Blog post: http://forensenellanebbia.blogspot.it/2015/08/geotag2kml-python-script-to-create-kml.html
 
-I needed a tool to parse thousands of geotagged pictures and quickly show them on Google Earth.
+The script uses [Exiftool](https://www.sno.phy.queensu.ca/~phil/exiftool/) to find geotagged files and parse their metadata. It then creates a Google Earth KML file to display the photos/videos found.
 
-The script was written to:
+The KML file will be structured this way:
 
-- parse recursively geotagged pictures and videos
-- create a KML file to show geotagged files on Google Earth
-- group and sort GPS data by date
-- show visually for each date where the first geotagged picture was taken. Each first GPS point is indicated by the icon of a little man
-- connect the GPS points of each date with a colored line
-- get the preview of a picture when clicking on a placemark
-- list make and model information of each digital camera used to take and geotag the analyzed pictures
+- GPS data is grouped and sorted by date;
+- the first GPS point of each date is indicated with an icon different from the other points of the same date;
+- the GPS points occurred on the same date are connected with a colored line;
+- placemark names contain: "Timestamp | Make Model | Altitude | Filename";
+- picture previews appear when clicking on a placemark.
+
+![KML](https://pbs.twimg.com/media/CMdDUfDWcAQfmvD.png){:width="800px" height="411px"}
 
 == Prerequisites ==
-  - Python v2.7+
-  - Exiftool v9+ (rename the executable into "exiftool.exe" and put it in a c:\tools)
-  - Google Earth v7+
+  - Python v2.7
+  - Exiftool v9+ (if you're using Windows, please rename the executable of ExifTool to "exiftool.exe")
 
 == Usage ==
 
-Run the script and type the absolute path of the directory to be parsed.
-The script will create a file named "GoogleEarth.kml" and will save it into the given path.
-
+Run the script and type the absolute path of the directory to parse.
+This is a cross-platform script.
