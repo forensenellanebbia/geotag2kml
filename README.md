@@ -13,7 +13,7 @@ The .KML file will be structured this way:
 - placemark names contain: "Timestamp | Make Model | Altitude | Filename";
 - when clicking on a placemark icon, the picture preview appears.
 
-![KML](https://pbs.twimg.com/media/CMdDUfDWcAQfmvD.png)
+![KML](https://pbs.twimg.com/media/DuULuZeX4AUDOVJ.jpg)
 
 ---
 ### Prerequisites
