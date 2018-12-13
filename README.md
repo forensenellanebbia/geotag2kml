@@ -14,6 +14,7 @@ The .KML file will be structured this way:
 - when clicking on a placemark icon, the picture preview appears.
 
 ![KML](https://pbs.twimg.com/media/DuULuZeX4AUDOVJ.jpg)
+![KML](https://pbs.twimg.com/media/CMdDUfDWcAQfmvD.png)
 
 ---
 ### Prerequisites
