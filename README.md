@@ -1,7 +1,7 @@
 # geotag2kml
 
 ### Description
-Blog post: http://forensenellanebbia.blogspot.it/2015/08/geotag2kml-python-script-to-create-kml.html
+Blog post: https://forensenellanebbia.blogspot.com/2015/08/geotag2kml-python-script-to-create-kml.html
 
 The is a cross-platform script that uses ExifTool to find geotagged files and parse their metadata. It then creates two different Google Earth .KML files to display the photos/videos found.
 
@@ -19,36 +19,36 @@ The .KML file will be structured this way:
 
 ---
 ### Prerequisites
-  - Python v2.7
+  - Python v3.8+
     - [geopy](https://pypi.org/project/geopy/)
 	- [Pillow](https://python-pillow.org/)
     - [randomcolor](https://pypi.org/project/randomcolor/)
-  - [Exiftool](https://www.sno.phy.queensu.ca/~phil/exiftool/) *(recommended version: 10.80 or above. If you're using Windows, please rename the executable to "exiftool.exe")*
+  - [Exiftool](https://exiftool.org/) *(If you're using Windows, please rename the executable to "exiftool.exe")*
   - [ImageMagick](https://imagemagick.org/) *(Win/Mac)* or [libheif-examples](https://launchpad.net/~strukturag/+archive/ubuntu/libheif) *(Ubuntu)*
 
 ### How to install each component
-**#Python dependencies**<br>
-- geopy: pip install geopy
-- Pillow: pip install Pillow
-- randomcolor: pip install randomcolor
+**#Python3 dependencies**<br>
+- pip3 install geopy Pillow randomcolor
 
-**#Windows**<br>
-- ExifTool: https://www.sno.phy.queensu.ca/~phil/exiftool/ (Windows Executable - rename to *exiftool.exe*)
+**#Windows 10 x64**<br>
+- ExifTool: https://exiftool.org/ (Windows Executable - rename to *exiftool.exe*)
 - ImageMagick: https://imagemagick.org/script/download.php#windows (Win64 dynamic at 16 bits-per-pixel component)
 
-**#Ubuntu**<br>
-- ExifTool: https://www.sno.phy.queensu.ca/~phil/exiftool/ (Compile from source code: perl Makefile.PL && make && sudo make install)
-- libheif-examples: sudo add-apt-repository ppa:strukturag/libheif && sudo apt-get update && sudo apt-get install libheif-examples
+**#Ubuntu (tested with Ubuntu 20.04) **<br>
+- ExifTool: sudo apt install libimage-exiftool-perl
+- libheif-examples: sudo add-apt-repository ppa:strukturag/libde265 && sudo add-apt-repository ppa:strukturag/libheif && sudo apt-get update && sudo apt-get install libheif-examples
+- Google Earth: wget -O ~/google-earth.deb https://dl.google.com/dl/earth/client/current/google-earth-pro-stable_current_amd64.deb && sudo dpkg -i ~/google-earth.deb
 
-**#Mac OS**<br>
-- ExifTool: https://www.sno.phy.queensu.ca/~phil/exiftool/ (MacOS Package)
-- ImageMagick: brew install --with-libheif imagemagick
+**#Mac OS (tested with macOS Big Sur 11.0.1) **<br>
+- If you're having any issue while installing Pillow, try: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && brew install libjpeg && pip3 install Pillow --user
+- ExifTool: https://exiftool.org/ (MacOS Package)
+- ImageMagick: brew install imagemagick
 ---
 ### How to use
 
 Run the script and type the absolute path of the directory to parse. Examples:
 
-- **Microsoft Windows**: python geotag2kml.py C:\MyPhotos
-- **Ubuntu**: python geotag2kml.py /home/username/Desktop/Photos
+- **Microsoft Windows**: python3 geotag2kml.py C:\MyPhotos
+- **Ubuntu**: python3 geotag2kml.py /home/username/Desktop/Photos
 
 The output files will be saved under the given path.

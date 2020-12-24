@@ -13,26 +13,27 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You can view the GNU General Public License at <http://www.gnu.org/licenses/>
+You can view the GNU General Public License at <https://www.gnu.org/licenses/>
 *******************************************************************************
 
 geotag2kml - WARNING: This program is provided "as-is"
 
 Author    : Gabriele Zambelli (Twitter: @gazambelli)
-Blog post : http://forensenellanebbia.blogspot.it/2015/08/geotag2kml-python-script-to-create-kml.html
+Blog post : https://forensenellanebbia.blogspot.com/2015/08/geotag2kml-python-script-to-create-kml.html
 
 This script will create a Google Earth KML file from geotagged photos and videos
 
 Prerequisites (see the Readme file for more information):
- - Python v2.7
-    * geopy       ( https://pypi.org/project/geopy/       )
-    * Pillow      ( https://python-pillow.org/            )
-    * randomcolor ( https://pypi.org/project/randomcolor/ )
- - ExifTool ( https://www.sno.phy.queensu.ca/~phil/exiftool/ )
-   (Recommended version: 10.80+. If you're using Windows, please rename the executable of ExifTool to "exiftool.exe")
- - ImageMagick ( https://imagemagick.org/              )
+ - Python v3.8+
+    * geopy       : https://pypi.org/project/geopy/
+    * Pillow      : https://python-pillow.org/
+    * randomcolor : https://pypi.org/project/randomcolor/
+ - ExifTool       : https://exiftool.org/
+   (If you're using Windows, please rename the executable of ExifTool to "exiftool.exe")
+ - ImageMagick    : https://imagemagick.org/
 
 Version history
+[v0.7] 2020-12-24 Updated to Python3, fixed broken URLs
 [v0.6] 2018-12-19
 [v0.5] 2018-12-13
 [v0.4] 2018-12-08
@@ -41,21 +42,21 @@ Version history
 [v0.1] 2015-08
 
 Script tested on:
- - Windows 10 (1803)      | ExifTool 11.12 | Python 2.7.13
- - Ubuntu 16.04           | ExifTool 11.22 | Python 2.7.12
- - macOS Sierra (10.12.6) | ExifTool 10.76 | Python 2.7.10
- - Google Earth Pro 7.3.2.5491
+ - Windows 10 (20H2)      | ExifTool 12.12 | Python 3.8.3
+ - Ubuntu 20.04           | ExifTool 11.88 | Python 3.8.5
+ - macOS Big Sur (11.0.1) | ExifTool 12.12 | Python 3.8.2
+ - Google Earth Pro 7.3.3.7786
 
 References:
  EXIFTOOL
-  - ExifTool GPS Tags                 : https://sno.phy.queensu.ca/~phil/exiftool/TagNames/GPS.html
-  - ExifTool Application Documentation: https://sno.phy.queensu.ca/~phil/exiftool/exiftool_pod.html
+  - ExifTool GPS Tags                 : https://exiftool.org/TagNames/GPS.html
+  - ExifTool Application Documentation: https://exiftool.org/exiftool_pod.html
  GOOGLE EARTH
-  - Generating a Google Earth KML file: http://u88.n24.queensu.ca/exiftool/forum/index.php/topic,1688.msg7373.html#msg7373
+  - Generating a Google Earth KML file: https://exiftool.org/forum/index.php/topic,1688.msg7373.html#msg7373
   - KML Reference                     : https://developers.google.com/kml/documentation/kmlreference#kmlextensions
   - Altitude Modes                    : https://developers.google.com/kml/documentation/altitudemode
   - Icons                             : https://sites.google.com/site/gmapsdevelopment/
-  - Force to open the external browser: https://productforums.google.com/forum/#!msg/earth/q5X_DGQMpyo/b4q6g_vQ-W8J
+  - Force to open the external browser: https://support.google.com/earth/forum/AAAA_9IoRZwq5X_DGQMpyo/
  GEOPY
   - Calculating Distance              : https://geopy.readthedocs.io/en/stable/#module-geopy.distance
  RANDOMCOLOR
@@ -65,16 +66,16 @@ References:
 
 from collections import Counter
 from datetime import datetime
-from geopy.distance import geodesic #pip install geopy
-from PIL import Image, ExifTags     #pip install Pillow
+from geopy.distance import geodesic
+from PIL import Image, ExifTags
 import csv
 import os
 import platform
-import randomcolor                  #pip install randomcolor
+import randomcolor
 import subprocess
 import sys
 
-version            = "0.6"
+version            = "0.7"
 line_colors_random = []
 
 
@@ -85,37 +86,37 @@ def welcome():
 		subprocess.check_output(["exiftool", "-ver"]) #check if exiftool is installed
 	except:
 		exceptions += 1
-		print "\n ERROR: exiftool was not found"
+		print ("\n ERROR: exiftool was not found")
 	if platform.system() == "Linux":
 		try:
 			subprocess.check_output(["which", "heif-convert"]) #check if libheif-examples is installed
 		except:
 			exceptions += 1
-			print "\n ERROR: The package libheif-examples was not found"
+			print ("\n ERROR: The package libheif-examples was not found")
 	else:
 		try:
 			subprocess.check_output(["magick", "-help"]) #check if ImageMagick is installed
 		except:
 			exceptions += 1
-			print "\n ERROR: ImageMagick was not found"
+			print ("\n ERROR: ImageMagick was not found")
 	if exceptions > 0:
-		print "\n"
+		print ("\n")
 		sys.exit()
 	if len(sys.argv) == 1:
-		print "\n geotag2kml (v%s)" % version
+		print ("\n geotag2kml (v%s)" % version)
 		exift_ver = os.popen("exiftool -ver").read()
 		if float(exift_ver) < 10.80:
-			print "\n !! It's recommended to use a more recent version of ExifTool !!\n"
-		print "\n This script will create a Google Earth KML file from geotagged photos and videos"
-		print "\n How to use:\n\n ==> python " + os.path.basename(sys.argv[0]) + " AbsolutePathToAnalyze"
-		print "\n [The script will search recursively                 ]"
-		print " [The output files will be saved under the given path]\n\n"
+			print ("\n !! It's recommended to use a more recent version of ExifTool !!\n")
+		print ("\n This script will create a Google Earth KML file from geotagged photos and videos")
+		print ("\n How to use:\n\n ==> python3 " + os.path.basename(sys.argv[0]) + " AbsolutePathToAnalyze")
+		print ("\n [The script will search recursively                 ]")
+		print (" [The output files will be saved under the given path]\n\n")
 		sys.exit()
 	elif len(sys.argv) == 2:
 		if os.path.exists(sys.argv[1]) == True:
 			os.chdir(sys.argv[1])
 		else:
-			print "\n ERROR: the path %s doesn't exist" % sys.argv[1]
+			print ("\n ERROR: the path %s doesn't exist") % sys.argv[1]
 			sys.exit()
 
 def os_check(exift_run):
@@ -147,7 +148,7 @@ def kml_creation(kml_type):
 			<IconStyle>
 				<scale>1.3</scale>
 				<Icon>
-					<href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href>
+					<href>https://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href>
 				</Icon>
 				<hotSpot x="32" y="1" xunits="pixels" yunits="pixels"/>
 			</IconStyle>
@@ -156,7 +157,7 @@ def kml_creation(kml_type):
 			</LabelStyle>
 			<ListStyle>
 				<ItemIcon>
-					<href>http://maps.google.com/mapfiles/kml/paddle/pink-blank-lv.png</href>
+					<href>https://maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href>
 				</ItemIcon>
 			</ListStyle>
 		</Style>
@@ -164,7 +165,7 @@ def kml_creation(kml_type):
 			<IconStyle>
 				<scale>1.4</scale>
 				<Icon>
-					<href>http://maps.google.com/mapfiles/kml/shapes/arrow.png</href>
+					<href>https://maps.google.com/mapfiles/kml/shapes/arrow.png</href>
 				</Icon>
 				<hotSpot x="32" y="1" xunits="pixels" yunits="pixels"/>
 			</IconStyle>
@@ -188,7 +189,7 @@ def kml_creation(kml_type):
 			<IconStyle>
 				<scale>1.4</scale>
 				<Icon>
-					<href>http://maps.google.com/mapfiles/kml/shapes/man.png</href>
+					<href>https://maps.google.com/mapfiles/kml/shapes/man.png</href>
 				</Icon>
 			</IconStyle>
 			<LabelStyle>
@@ -199,7 +200,7 @@ def kml_creation(kml_type):
 			<IconStyle>
 				<scale>1.1</scale>
 				<Icon>
-					<href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href>
+					<href>https://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href>
 				</Icon>
 				<hotSpot x="32" y="1" xunits="pixels" yunits="pixels"/>
 			</IconStyle>
@@ -208,7 +209,7 @@ def kml_creation(kml_type):
 			</LabelStyle>
 			<ListStyle>
 				<ItemIcon>
-					<href>http://maps.google.com/mapfiles/kml/paddle/pink-blank-lv.png</href>
+					<href>https://maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href>
 				</ItemIcon>
 			</ListStyle>
 		</Style>
@@ -216,7 +217,7 @@ def kml_creation(kml_type):
 			<IconStyle>
 				<scale>1.2</scale>
 				<Icon>
-					<href>http://maps.google.com/mapfiles/kml/shapes/man.png</href>
+					<href>https://maps.google.com/mapfiles/kml/shapes/man.png</href>
 				</Icon>
 			</IconStyle>
 			<LabelStyle>
@@ -247,7 +248,7 @@ def kml_creation(kml_type):
 			<IconStyle>
 				<scale>1.2</scale>
 				<Icon>
-					<href>http://maps.google.com/mapfiles/kml/shapes/arrow.png</href>
+					<href>https://maps.google.com/mapfiles/kml/shapes/arrow.png</href>
 				</Icon>
 				<hotSpot x="32" y="1" xunits="pixels" yunits="pixels"/>
 			</IconStyle>
@@ -266,7 +267,7 @@ def kml_creation(kml_type):
 	# GPSAltitudeRef
 	# 0 = Above Sea Level
 	# 1 = Below Sea Level
-	# http://www.sno.phy.queensu.ca/~phil/exiftool/faq.html
+	# https://exiftool.org/faq.html#Q6
 
 	#PLACEMARK PREPARATION
 	counter_wp_date = 0
@@ -340,7 +341,7 @@ def kml_creation(kml_type):
 										thumb_path = "%s/%s.jpg" % (prefix_thumbs,thumbs_styleid)
 										im.save(thumb_path, 'JPEG', quality=80)
 									except:
-										thumb_path = "http://maps.google.com/mapfiles/kml/paddle/pink-blank.png"
+										thumb_path = "https://maps.google.com/mapfiles/kml/paddle/pink-blank.png"
 									
 									#STYLE FOR THUMBNAILS USED AS PLACEMARK ICONS
 									thumbs_style   = '''					<Style id="sh_%s">
@@ -631,7 +632,7 @@ if numlines > 0:
 	for csv_row in csv_rows:
 		csv_TS = csv_row["Timestamp"] #Timestamp, in order of choice: DateTimeOriginal > CreateDate/CreationDate > ModifyDate
 		csv_TS = csv_TS[:10] # Grab YYYY:MM:DD (first 10 characters)
-		csv_MM  = csv_row["Make"] + " " + csv_row["Model"] #MM = Make Model
+		csv_MM = csv_row["Make"] + " " + csv_row["Model"] #MM = Make Model
 		uniq_dates.append(csv_TS)
 		uniq_models.append(csv_MM)
 	
@@ -659,26 +660,26 @@ os.remove(file_temp) #remove temporary CSV file
 
 #script duration time
 end_time = datetime.now()
-print "\ngeotag2kml (v%s)" % version
-print "\nScript started : " + str(start_time)
-print "Script finished: " + str(end_time)
-print('Duration       : {}'.format(end_time - start_time))
-print "-------------------------------------------\n"
+print ("\ngeotag2kml (v%s)" % version)
+print ("\nScript started : " + str(start_time))
+print ("Script finished: " + str(end_time))
+print ('Duration       : {}'.format(end_time - start_time))
+print ("-------------------------------------------\n")
 
 #print summary
-print "Geotagged file(s) found: %d" % numlines
+print ("Geotagged file(s) found: %d" % numlines)
 
 if numlines > 0:
-	print "Unique date(s) found   : %d" % len(uniq_dates)
+	print ("Unique date(s) found   : %d" % len(uniq_dates))
 	counter_path = 0
 	for uniq_date_counter, freq in uniq_dates_counter.most_common():
 		if freq > 1:
 			counter_path +=1
-	print "Path(s) created        : %d\n" % counter_path
-	print "Geotagged file(s) found per device type:"
+	print ("Path(s) created        : %d\n" % counter_path)
+	print ("Geotagged file(s) found per device type:")
 	for makemodel, freq in uniq_models_counter.most_common(): #most_common() returns a list ordered from the most common element to the least
-		print "  *   %s (%d)" % (makemodel,freq)
-	print "\nOutput files:"
-	print "  ==> %s" % file_exif
-	print "  ==> %s" % file_GoogleEarth + "icons.kml"
-	print "  ==> %s" % file_GoogleEarth + "thumbs.kml"
+		print ("  *   %s (%d)" % (makemodel,freq))
+	print ("\nOutput files:")
+	print ("  ==> %s" % file_exif)
+	print ("  ==> %s" % file_GoogleEarth + "icons.kml")
+	print ("  ==> %s" % file_GoogleEarth + "thumbs.kml")
