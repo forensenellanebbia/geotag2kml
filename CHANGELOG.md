@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [v0.7] - 2020-12-24
+### Changed
+- Updated to Python 3
+- Fixed broken URLs
+
 ## [v0.6] - 2018-12-19
 ### Added
 - Thumbnail creation (stored in a separate folder) for each geotagged file in order to speed up the opening of the "_thumbs" .KML file (Requires: **Pillow**) and avoid crashing Google Earth Pro
