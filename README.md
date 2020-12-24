@@ -34,12 +34,12 @@ The .KML file will be structured this way:
 - ExifTool: https://exiftool.org/ (Windows Executable - rename to *exiftool.exe*)
 - ImageMagick: https://imagemagick.org/script/download.php#windows (Win64 dynamic at 16 bits-per-pixel component)
 
-**#Ubuntu (tested with Ubuntu 20.04) **<br>
+**#Ubuntu (tested with Ubuntu 20.04)**<br>
 - ExifTool: sudo apt install libimage-exiftool-perl
 - libheif-examples: sudo add-apt-repository ppa:strukturag/libde265 && sudo add-apt-repository ppa:strukturag/libheif && sudo apt-get update && sudo apt-get install libheif-examples
 - Google Earth: wget -O ~/google-earth.deb https://dl.google.com/dl/earth/client/current/google-earth-pro-stable_current_amd64.deb && sudo dpkg -i ~/google-earth.deb
 
-**#Mac OS (tested with macOS Big Sur 11.0.1) **<br>
+**#Mac OS (tested with macOS Big Sur 11.0.1)**<br>
 - If you're having any issue while installing Pillow, try: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && brew install libjpeg && pip3 install Pillow --user
 - ExifTool: https://exiftool.org/ (MacOS Package)
 - ImageMagick: brew install imagemagick
