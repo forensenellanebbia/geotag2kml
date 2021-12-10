@@ -23,28 +23,41 @@ The .KML file will be structured this way:
     - [geopy](https://pypi.org/project/geopy/)
 	- [Pillow](https://python-pillow.org/)
     - [randomcolor](https://pypi.org/project/randomcolor/)
-  - [Exiftool](https://exiftool.org/) *(If you're using Windows, please rename the executable to "exiftool.exe")*
-  - [ImageMagick](https://imagemagick.org/) *(Win/Mac)* or [libheif-examples](https://launchpad.net/~strukturag/+archive/ubuntu/libheif) *(Ubuntu)*
+  - [Exiftool](https://exiftool.org/) 
+  - [ImageMagick](https://imagemagick.org/) *(Win/Mac)* or [libheif](https://launchpad.net/~strukturag/+archive/ubuntu/libheif) *(Ubuntu)*
 
 ### How to install each component
 **#Python3 dependencies**<br>
 - pip3 install geopy Pillow randomcolor
 
 **#Windows 10 x64**<br>
-- ExifTool: https://exiftool.org/ (Windows Executable - rename to *exiftool.exe*)
+- ExifTool: https://exiftool.org/ (rename the executable to *exiftool.exe*)
 - ImageMagick: https://imagemagick.org/script/download.php#windows (Win64 dynamic at 16 bits-per-pixel component)
 
-**#Ubuntu (tested with Ubuntu 20.04)**<br>
-- ExifTool: sudo apt install libimage-exiftool-perl
-- libheif-examples: sudo add-apt-repository ppa:strukturag/libde265 && sudo add-apt-repository ppa:strukturag/libheif && sudo apt-get update && sudo apt-get install libheif-examples
-- Google Earth: wget -O ~/google-earth.deb https://dl.google.com/dl/earth/client/current/google-earth-pro-stable_current_amd64.deb && sudo dpkg -i ~/google-earth.deb
+**#Ubuntu (last tested with Ubuntu 20.04.3 LTS)**<br>
+```bash
+#ExifTool
+sudo apt install libimage-exiftool-perl -y
+
+#libheif
+sudo add-apt-repository ppa:strukturag/libde265 -y && sudo add-apt-repository ppa:strukturag/libheif -y && sudo apt-get update && sudo apt install libheif-examples -y
+
+#Google Earth
+wget -O ~/google-earth.deb https://dl.google.com/dl/earth/client/current/google-earth-pro-stable_current_amd64.deb && sudo dpkg -i ~/google-earth.deb
+```
 
 **#Mac OS (tested with macOS Big Sur 11.0.1)**<br>
-- If you're having any issue while installing Pillow, try: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && brew install libjpeg && pip3 install Pillow --user
+- If you're having any issue while installing Pillow, try:
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && brew install libjpeg && pip3 install Pillow --user
+```
 - ExifTool: https://exiftool.org/ (MacOS Package)
-- ImageMagick: brew install imagemagick
+- ImageMagick
+```bash
+brew install imagemagick
+```
 ---
-### How to use
+### How to use the script
 
 Run the script and type the absolute path of the directory to parse. Examples:
 
