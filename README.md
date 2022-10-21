@@ -34,13 +34,13 @@ The .KML file will be structured this way:
 - ExifTool: https://exiftool.org/ (rename the executable to *exiftool.exe*)
 - ImageMagick: https://imagemagick.org/script/download.php#windows (Win64 dynamic at 16 bits-per-pixel component)
 
-**#Ubuntu (last tested with Ubuntu 20.04.3 LTS)**<br>
+**#Ubuntu (last tested with Ubuntu 22.04.1 LTS)**<br>
 ```bash
 #ExifTool
 sudo apt install libimage-exiftool-perl -y
 
 #libheif
-sudo add-apt-repository ppa:strukturag/libde265 -y && sudo add-apt-repository ppa:strukturag/libheif -y && sudo apt-get update && sudo apt install libheif-examples -y
+sudo apt-get install libheif-examples
 
 #Google Earth
 wget -O ~/google-earth.deb https://dl.google.com/dl/earth/client/current/google-earth-pro-stable_current_amd64.deb && sudo dpkg -i ~/google-earth.deb
